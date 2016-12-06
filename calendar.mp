@@ -1,9 +1,8 @@
-
 u := .2cm;
 
 numeric daysInMonth[];
 daysInMonth[0] = 31;
-daysInMonth[1] = 28;
+daysInMonth[1] = 28; % Set this to 29 and recompile to make a leap year version
 daysInMonth[2] = 31;
 daysInMonth[3] = 30;
 daysInMonth[4] = 31;
@@ -32,13 +31,10 @@ monthLetters[11] = "D";
 pi := 3.141529;
 
 beginfig(0)
+
+  %%%%%% Helper functions
   def makeGrayColor(expr v) =
     (v, v, v)
-  enddef;
-
-  def drawDay(expr z, text) =
-    draw unitsquare scaled u shifted z withpen pencircle scaled .3pt withcolor makeGrayColor(.3);
-    label(text, origin) scaled 0.4 shifted (z + (.5u, .5u)) withcolor makeGrayColor(.8);
   enddef;
 
   def cos(expr n) =
@@ -49,40 +45,46 @@ beginfig(0)
     sind(n / pi * 180)
   enddef;
 
-  daysInYear := 0;
+  def pointAlongPath(expr t, path) =
+    (point (arctime (t * arclength path) of path) of path)
+  enddef;
+
+
+
+  def drawDay(expr z, text) =
+    draw unitsquare scaled u shifted z withpen pencircle scaled .3pt withcolor makeGrayColor(.8);
+    label(text, origin) scaled 0.4 shifted (z + (.5u, .5u)) withcolor makeGrayColor(.8);
+  enddef;
+
+  
+
+  daysInYear := 0; % We can't hard code this b/c of leap years
   for i=0 step 1 until 11:
     daysInYear := daysInYear + daysInMonth[i];
   endfor;
 
-  path p;
-  p = (20, 0);
+  path spiralPath;
+  spiralPath = (20, 0); % Initial point
 
   for i=1 step 1 until 400:
-    numeric angle, x, y;
+    numeric angle, f;
     angle := 0.1 * i;
-    x = (20 + 4 * angle) * cos(angle);
-    y = (20 + 4 * angle) * sin(angle);
+    f := (20 + 4 * angle);
 
-    p := p--(x,y);
+    spiralPath := spiralPath--(f * cos(angle), f * sin(angle));
   endfor;
   
-
-  numeric pathLength, dayCounter;
-  pathLength = arclength p;
   dayCounter := 0;
-
   for month=0 step 1 until 11:
     for dayInMonth=0 step 1 until daysInMonth[month] - 1:
       if dayInMonth = 0:
-        drawDay(point (arctime (dayCounter/daysInYear * pathLength) of p) of p, monthLetters[month]);
+        drawDay(pointAlongPath(dayCounter/daysInYear, spiralPath), monthLetters[month]);
       else:
-        drawDay(point (arctime (dayCounter/daysInYear * pathLength) of p) of p, decimal (dayInMonth + 1));
+        drawDay(pointAlongPath(dayCounter/daysInYear, spiralPath), decimal (dayInMonth + 1));
       fi;
 
       dayCounter := dayCounter + 1;
     endfor;
   endfor;
-  
 endfig;
-
 end;
