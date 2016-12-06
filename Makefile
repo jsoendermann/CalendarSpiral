@@ -1,2 +1,2 @@
 calendarmake: calendar.mp
-	mpost calendar && epstopdf calendar.0
+	mpost calendar && mptopdf calendar.0

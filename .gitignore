@@ -2,3 +2,7 @@
 *.eps
 *.log
 *.pdf
+.DS_Store
+*.mpx
+mptextmp.mp
+*.tex
