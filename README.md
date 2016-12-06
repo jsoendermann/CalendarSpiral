@@ -1,4 +1,4 @@
-## CalendarSpiral
-Don't break the chain style calendar written in MetaPost.
+
+[<h1>Click here to download</h1>](https://github.com/jsoendermann/CalendarSpiral/raw/master/calendar.pdf)
 
 Run `make` to build.
