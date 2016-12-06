@@ -1,5 +1,5 @@
 
-u := 1cm;
+u := .2cm;
 
 numeric daysInMonth[];
 daysInMonth[0] = 31;
@@ -32,11 +32,13 @@ monthLetters[11] = "D";
 pi := 3.141529;
 
 beginfig(0)
+  def makeGrayColor(expr v) =
+    (v, v, v)
+  enddef;
+
   def drawDay(expr z, text) =
-    pair pos;
-    pos = z scaled u;
-    draw unitsquare scaled u shifted pos;
-    label(text, origin) scaled 2 shifted (pos + (.5u, .5u)) withcolor (0.8, 0.8, 0.8);
+    draw unitsquare scaled u shifted z withpen pencircle scaled .3pt withcolor makeGrayColor(.3);
+    label(text, origin) scaled 0.4 shifted (z + (.5u, .5u)) withcolor makeGrayColor(.8);
   enddef;
 
   def cos(expr n) =
@@ -52,34 +54,34 @@ beginfig(0)
     daysInYear := daysInYear + daysInMonth[i];
   endfor;
 
-  numeric dayCounter;
-  dayCounter := 0;
+  path p;
+  p = (20, 0);
 
-  def calculateAngle(expr n) =
-    (0.6 * n ** 0.7 + (sin(n * pi * 2 * 0.6 / daysInYear) * 4))
-  enddef;
+  for i=1 step 1 until 400:
+    numeric angle, x, y;
+    angle := 0.1 * i;
+    x = (20 + 4 * angle) * cos(angle);
+    y = (20 + 4 * angle) * sin(angle);
+
+    p := p--(x,y);
+  endfor;
+  
+
+  numeric pathLength, dayCounter;
+  pathLength = arclength p;
+  dayCounter := 0;
 
   for month=0 step 1 until 11:
     for dayInMonth=0 step 1 until daysInMonth[month] - 1:
-      numeric angle;
-      angle := calculateAngle(dayCounter + 2.0);
-
-      pair P;
-      P := (
-        cos(angle - calculateAngle(2)) * (2 + angle),
-        sin(angle - calculateAngle(2)) * (2 + angle)
-      );
-
       if dayInMonth = 0:
-        drawDay(P, monthLetters[month]);
+        drawDay(point (arctime (dayCounter/daysInYear * pathLength) of p) of p, monthLetters[month]);
       else:
-        drawDay(P, ""&decimal dayInMonth);
+        drawDay(point (arctime (dayCounter/daysInYear * pathLength) of p) of p, decimal (dayInMonth + 1));
       fi;
 
       dayCounter := dayCounter + 1;
     endfor;
   endfor;
-
   
 endfig;
 
