@@ -1,5 +1,8 @@
 u := .2cm;
 
+% Use this to start at months other than January
+monthOffset := 8;
+
 numeric daysInMonth[];
 daysInMonth[0] = 31;
 daysInMonth[1] = 28; % Set this to 29 and recompile to make a leap year version
@@ -76,9 +79,9 @@ beginfig(0)
   
   dayCounter := 0;
   for month=0 step 1 until 11:
-    for dayInMonth=0 step 1 until daysInMonth[month] - 1:
+    for dayInMonth=0 step 1 until daysInMonth[((month + monthOffset) mod 12)] - 1:
       if dayInMonth = 0:
-        drawDay(pointAlongPath(dayCounter/daysInYear, spiralPath), monthLetters[month]);
+        drawDay(pointAlongPath(dayCounter/daysInYear, spiralPath), monthLetters[((month + monthOffset) mod 12)]);
       else:
         drawDay(pointAlongPath(dayCounter/daysInYear, spiralPath), decimal (dayInMonth + 1));
       fi;
